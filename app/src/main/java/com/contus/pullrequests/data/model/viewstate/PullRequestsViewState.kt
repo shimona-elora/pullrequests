@@ -1,6 +1,6 @@
 package com.contus.pullrequests.data.model.viewstate
 
-import com.contus.pullrequests.data.model.PullRequest
+import com.contus.pullrequests.data.model.response.PullRequest
 
 data class PullRequestsViewState(
     val loading: Boolean = false,

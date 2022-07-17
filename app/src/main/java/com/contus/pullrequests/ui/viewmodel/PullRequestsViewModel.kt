@@ -1,45 +1,50 @@
 package com.contus.pullrequests.ui.viewmodel
 
 import androidx.lifecycle.*
-import com.contus.pullrequests.data.model.PullRequest
 import com.contus.pullrequests.data.model.viewstate.PullRequestResult
 import com.contus.pullrequests.data.model.viewstate.PullRequestsViewState
 import com.contus.pullrequests.interactor.IPullRequestsInteractor
+import com.contus.pullrequests.utils.asyncAwait
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class PullRequestsViewModel(private val interactor: IPullRequestsInteractor) : ViewModel() {
 
-    private var viewState: LiveData<PullRequestsViewState> = MutableLiveData()
+    private val viewState: MutableLiveData<PullRequestsViewState> = MutableLiveData(
+        PullRequestsViewState()
+    )
 
     fun getViewState() = viewState
 
     fun getPullRequests() {
-        viewState = viewState.switchMap { currentValue ->
-            liveData<PullRequestsViewState> {
-                emit(currentValue.copy(
-                    loading = true
-                ))
-            }
-            liveData<PullRequestResult>(Dispatchers.IO) {
-                interactor.getClosedPullRequests(this)
-            }.map {
-                when (it) {
-                    is PullRequestResult.PullRequestSuccess -> {
-                        currentValue.copy(
-                            loading = false,
-                            list = it.list
-                        )
-                    }
+        viewState.postValue(
+            viewState.value?.copy(
+                loading = true
+            )
+        )
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                val res = asyncAwait { interactor.getClosedPullRequests() }
+                viewState.postValue(
+                    when (res) {
+                        is PullRequestResult.PullRequestSuccess -> {
+                            viewState.value?.copy(
+                                loading = false,
+                                list = res.list,
+                                error = null
+                            )
+                        }
 
-                    is PullRequestResult.PullRequestFailure -> {
-                        currentValue.copy(
-                            loading = false,
-                            error = it.message
-                        )
+                        is PullRequestResult.PullRequestFailure -> {
+                            viewState.value?.copy(
+                                loading = false,
+                                error = res.message
+                            )
+                        }
                     }
-                }
+                )
             }
         }
     }
-
 }
