@@ -2,5 +2,8 @@
     <string name="app_name">Pull Requests</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="closed_pull_requests">Closed Pull Requests</string>
+    <string name="created_by">Created by:</string>
+    <string name="created_at">Created at: %1$s</string>
+    <string name="closed_at">Closed at: %1$s</string>
     <!-- Strings used for fragments for navigation -->
 </resources>

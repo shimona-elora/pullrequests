@@ -1,17 +1,21 @@
 package com.contus.pullrequests.ui
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.contus.pullrequests.data.model.ProductItem
-import com.contus.pullrequests.databinding.ItemGroceryBinding
+import com.contus.pullrequests.R
+import com.contus.pullrequests.data.model.response.PullRequest
+import com.contus.pullrequests.databinding.ItemPullRequestsBinding
 
-class PullRequestsAdapter : ListAdapter<ProductItem, PullRequestsAdapter.ViewHolder>(AdapterDiffUtil) {
+class PullRequestsAdapter :
+    ListAdapter<PullRequest, PullRequestsAdapter.ViewHolder>(AdapterDiffUtil) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ItemGroceryBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding =
+            ItemPullRequestsBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
 
@@ -19,27 +23,36 @@ class PullRequestsAdapter : ListAdapter<ProductItem, PullRequestsAdapter.ViewHol
         holder.onBind(getItem(position))
     }
 
-    class ViewHolder(private val binding: ItemGroceryBinding) : RecyclerView.ViewHolder(binding.root) {
+    class ViewHolder(private val binding: ItemPullRequestsBinding) :
+        RecyclerView.ViewHolder(binding.root) {
 
-        fun onBind(data: ProductItem) {
-            Glide.with(itemView.context)
-                .load(data.imageUrl)
-                .into(binding.ivGrocery)
+        fun onBind(data: PullRequest) {
+            if (!data.user?.userImage.isNullOrEmpty()) {
+                Glide.with(itemView.context)
+                    .load(data.user?.userImage)
+                    .circleCrop()
+                    .into(binding.ivAvatar)
+                binding.ivAvatar.visibility = View.VISIBLE
+            } else {
+                binding.ivAvatar.visibility = View.GONE
+            }
 
-            binding.tvName.text = data.title
+            binding.tvTitle.text = data.title
 
-            binding.tvQuantity.text = data.quantity
+            binding.tvCreated.text = itemView.context.getString(R.string.created_at, data.createdAt)
 
-            binding.tvPrice.text = data.price
+            binding.tvClosed.text = itemView.context.getString(R.string.closed_at, data.closedAt)
+
+            binding.tvName.text = data.user?.userName
         }
     }
 
-    object AdapterDiffUtil : androidx.recyclerview.widget.DiffUtil.ItemCallback<ProductItem>() {
-        override fun areItemsTheSame(oldItem: ProductItem, newItem: ProductItem): Boolean {
+    object AdapterDiffUtil : androidx.recyclerview.widget.DiffUtil.ItemCallback<PullRequest>() {
+        override fun areItemsTheSame(oldItem: PullRequest, newItem: PullRequest): Boolean {
             return oldItem.id == newItem.id
         }
 
-        override fun areContentsTheSame(oldItem: ProductItem, newItem: ProductItem): Boolean {
+        override fun areContentsTheSame(oldItem: PullRequest, newItem: PullRequest): Boolean {
             return oldItem == newItem
         }
     }
