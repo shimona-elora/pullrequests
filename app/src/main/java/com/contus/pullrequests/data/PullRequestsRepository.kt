@@ -19,7 +19,11 @@ class PullRequestsRepository(private val apiService: PullRequestsApiService) :
                 call: Call<List<PullRequest>?>,
                 response: Response<List<PullRequest>?>
             ) {
-                cont.resume(PullRequestResult.PullRequestSuccess(response.body()))
+                if (response.code() == 200) {
+                    cont.resume(PullRequestResult.PullRequestSuccess(response.body()))
+                } else {
+                    cont.resume(PullRequestResult.PullRequestFailure(response.message()))
+                }
             }
 
             override fun onFailure(call: Call<List<PullRequest>?>, t: Throwable) {
