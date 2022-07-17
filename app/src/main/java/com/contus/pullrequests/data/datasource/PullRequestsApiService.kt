@@ -10,7 +10,7 @@ import retrofit2.http.Path
 interface PullRequestsApiService {
 
     @Headers(
-        "Authorization: token ${BuildConfig.TOKEN}",
+        "Authorization: token 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",
         "Accept: application/vnd.github+json"
     )
     @GET("repos/{owner}/{repo}/pulls?state=closed")
