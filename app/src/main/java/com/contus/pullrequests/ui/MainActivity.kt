@@ -2,9 +2,9 @@ package com.contus.pullrequests.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.lifecycle.ViewModelProvider
-import com.contus.imageloading.databinding.ActivityMainBinding
+import com.contus.pullrequests.databinding.ActivityMainBinding
 import com.contus.pullrequests.ui.viewmodel.PullRequestsViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity() {
 
@@ -12,9 +12,7 @@ class MainActivity : AppCompatActivity() {
         PullRequestsAdapter()
     }
 
-    private val viewModel: PullRequestsViewModel by lazy {
-        ViewModelProvider(this).get(PullRequestsViewModel::class.java)
-    }
+    private val viewModel: PullRequestsViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,13 +21,10 @@ class MainActivity : AppCompatActivity() {
 
         binding.rvGrocery.adapter = adapter
 
-        groceryViewModel.liveData.observe(this) {
+        viewModel.getViewState().observe(this) {
             it?.let {
-                adapter.submitList(it)
+                renderViewState()
             }
         }
-
-        groceryViewModel.getGroceryList(applicationContext)
-
     }
 }

@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:text="@string/dunzo_grocery_list"
+        android:text="@string/closed_pull_requests"
         android:textColor="@color/black"
         android:textSize="18sp"
         android:textStyle="bold"
@@ -30,5 +30,11 @@
         tools:itemCount="12"
         tools:layout_editor_absoluteX="-29dp"
         tools:listitem="@layout/item_pull_requests" />
+
+    <include
+        android:id="@+id/vProgressBar"
+        layout="@layout/view_progress_bar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
